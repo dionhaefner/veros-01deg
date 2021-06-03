@@ -16,12 +16,6 @@ DATA_FILES = tools.get_assets("global_01deg", os.path.join(BASE_PATH, "assets.js
 class GlobalEddyResolvingSetup(VerosSetup):
     """Global 0.1 degree model with 120 vertical levels."""
 
-    # global settings
-    min_depth = 10.0
-    max_depth = 5400.0
-    equatorial_grid_spacing_factor = 0.5
-    polar_grid_spacing_factor = None
-
     @veros_routine
     def set_parameter(self, state):
         """
@@ -30,7 +24,7 @@ class GlobalEddyResolvingSetup(VerosSetup):
         settings = state.settings
 
         settings.nx = 3600
-        settings.ny = 1800
+        settings.ny = 1600
         settings.nz = 120
         settings.dt_mom = 180.
         settings.dt_tracer = 180.
@@ -110,7 +104,7 @@ class GlobalEddyResolvingSetup(VerosSetup):
             var_obj = forcing_file.variables[var]
             return npx.array(var_obj[idx]).T
 
-    @veros_routine(dist_safe=False, local_variables=["dxt", "dyt", "dzt"])
+    @veros_routine
     def set_grid(self, state):
         vs = state.variables
         settings = state.settings
