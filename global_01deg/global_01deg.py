@@ -109,10 +109,10 @@ class GlobalEddyResolvingSetup(VerosSetup):
         vs = state.variables
         settings = state.settings
 
-        x_idx = get_chunk_slices(settings.nx, settings.ny, ("xt",))
+        x_idx, _ = get_chunk_slices(settings.nx, settings.ny, ("xt",))
         vs.dxt = self._get_data("dxt", x_idx)
 
-        y_idx = get_chunk_slices(settings.nx, settings.ny, ("yt",))
+        y_idx, _ = get_chunk_slices(settings.nx, settings.ny, ("yt",))
         vs.dyt = self._get_data("dyt", y_idx)
 
         vs.dzt = self._get_data("dzt")
@@ -129,7 +129,7 @@ class GlobalEddyResolvingSetup(VerosSetup):
     def set_topography(self, state):
         vs = state.variables
         settings = state.settings
-        idx = get_chunk_slices(settings.nx, settings.ny, ("xt", "yt"))
+        idx, _ = get_chunk_slices(settings.nx, settings.ny, ("xt", "yt"))
         vs.kbot = self._get_data("kbot", idx=idx)
 
     @veros_routine
@@ -141,7 +141,8 @@ class GlobalEddyResolvingSetup(VerosSetup):
         efold1_shortwave = 0.35
         efold2_shortwave = 23.0
 
-        idx = (*get_chunk_slices(settings.nx, settings.ny, ("xt", "yt")), Ellipsis)
+        idx, _ = get_chunk_slices(settings.nx, settings.ny, ("xt", "yt"))
+        idx += (Ellipsis,)
 
         # initial conditions
         temp_data = self._get_data("temperature", idx)
