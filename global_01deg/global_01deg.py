@@ -9,6 +9,7 @@ from veros.variables import Variable
 from veros.distributed import get_chunk_slices
 from veros.core.operators import numpy as npx, update, at
 
+
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))
 DATA_FILES = tools.get_assets("global_01deg", os.path.join(BASE_PATH, "assets.json"))
 
@@ -90,7 +91,7 @@ class GlobalEddyResolvingSetup(VerosSetup):
     def _get_data(self, var, idx=None):
         if idx is None:
             idx = Ellipsis
-        else:
+        elif not isinstance(idx, slice):
             idx = idx[::-1]
 
         kwargs = {}
@@ -110,10 +111,10 @@ class GlobalEddyResolvingSetup(VerosSetup):
         settings = state.settings
 
         x_idx, _ = get_chunk_slices(settings.nx, settings.ny, ("xt",))
-        vs.dxt = self._get_data("dxt", x_idx)
+        vs.dxt = update(vs.dxt, at[2:-2], self._get_data("dxt", x_idx[0]))
 
         y_idx, _ = get_chunk_slices(settings.nx, settings.ny, ("yt",))
-        vs.dyt = self._get_data("dyt", y_idx)
+        vs.dyt = update(vs.dyt, at[2:-2], self._get_data("dyt", y_idx[0]))
 
         vs.dzt = self._get_data("dzt")
 
@@ -130,7 +131,7 @@ class GlobalEddyResolvingSetup(VerosSetup):
         vs = state.variables
         settings = state.settings
         idx, _ = get_chunk_slices(settings.nx, settings.ny, ("xt", "yt"))
-        vs.kbot = self._get_data("kbot", idx=idx)
+        vs.kbot = update(vs.kbot, at[2:-2, 2:-2], self._get_data("kbot", idx=idx))
 
     @veros_routine
     def set_initial_conditions(self, state):
@@ -157,10 +158,10 @@ class GlobalEddyResolvingSetup(VerosSetup):
         vs.taux = update(vs.taux, at[2:-2, 2:-2, :], self._get_data("tau_x", idx))
         vs.tauy = update(vs.tauy, at[2:-2, 2:-2, :], self._get_data("tau_y", idx))
 
-        qnec_data = self._get_data("qnec", idx)
+        qnec_data = self._get_data("dqdt", idx)
         vs.qnec = update(vs.qnec, at[2:-2, 2:-2, :], qnec_data * vs.maskT[2:-2, 2:-2, -1, npx.newaxis])
 
-        qsol_data = self._get_data("qsol", idx)
+        qsol_data = self._get_data("swf", idx)
         vs.qsol = update(vs.qsol, at[2:-2, 2:-2, :], -qsol_data * vs.maskT[2:-2, 2:-2, -1, npx.newaxis])
 
         # SST and SSS
