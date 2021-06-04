@@ -11,7 +11,7 @@ from veros.core.operators import numpy as npx, update, at
 
 
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))
-DATA_FILES = tools.get_assets("global_01deg", os.path.join(BASE_PATH, "assets.json"))
+DATA_FILES = tools.get_assets("global_01deg", os.path.join(BASE_PATH, "assets.json"), skip_md5=True)
 
 
 class GlobalEddyResolvingSetup(VerosSetup):

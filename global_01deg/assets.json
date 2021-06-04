@@ -1,5 +1,6 @@
 {
   "forcing": {
-    "url": "https://sid.erda.dk/share_redirect/gsdZADr8to/global_01deg/01deg-forcing.nc"
+    "url": "https://sid.erda.dk/share_redirect/gsdZADr8to/global_01deg/01deg-forcing.nc",
+    "md5": "b2bacbb3c89732f54573b2f0a2aeb925"
   }
 }
