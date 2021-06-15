@@ -37,9 +37,6 @@ class GlobalEddyResolvingSetup(VerosSetup):
         settings.coord_degree = True
         settings.enable_cyclic_x = True
 
-        settings.congr_epsilon = 1e-8
-        settings.congr_max_iterations = 1000
-
         settings.enable_hor_friction = True
         settings.A_h = 1e3
         settings.enable_hor_friction_cos_scaling = True
@@ -76,16 +73,16 @@ class GlobalEddyResolvingSetup(VerosSetup):
         settings.enable_idemix = False
 
         # custom variables
-        nmonths = 12
+        state.dimensions["nmonths"] = 12
         state.var_meta.update(
-            t_star=Variable("t_star", ("xt", "yt", nmonths), "", "", time_dependent=False),
-            s_star=Variable("s_star", ("xt", "yt", nmonths), "", "", time_dependent=False),
-            qnec=Variable("qnec", ("xt", "yt", nmonths), "", "", time_dependent=False),
-            qnet=Variable("qnet", ("xt", "yt", nmonths), "", "", time_dependent=False),
-            qsol=Variable("qsol", ("xt", "yt", nmonths), "", "", time_dependent=False),
+            t_star=Variable("t_star", ("xt", "yt", "nmonths"), "", "", time_dependent=False),
+            s_star=Variable("s_star", ("xt", "yt", "nmonths"), "", "", time_dependent=False),
+            qnec=Variable("qnec", ("xt", "yt", "nmonths"), "", "", time_dependent=False),
+            qnet=Variable("qnet", ("xt", "yt", "nmonths"), "", "", time_dependent=False),
+            qsol=Variable("qsol", ("xt", "yt", "nmonths"), "", "", time_dependent=False),
             divpen_shortwave=Variable("divpen_shortwave", ("zt",), "", "", time_dependent=False),
-            taux=Variable("taux", ("xt", "yt", nmonths), "", "", time_dependent=False),
-            tauy=Variable("tauy", ("xt", "yt", nmonths), "", "", time_dependent=False),
+            taux=Variable("taux", ("xt", "yt", "nmonths"), "", "", time_dependent=False),
+            tauy=Variable("tauy", ("xt", "yt", "nmonths"), "", "", time_dependent=False),
         )
 
     def _get_data(self, var, idx=None):
