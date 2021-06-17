@@ -57,7 +57,10 @@ cd petsc
     CXXOPTFLAGS='-O3 -march=native -mtune=native' \
     FOPTFLAGS='-O3 -march=native -mtune=native' \
     CUDAOPTFLAGS='-O3' \
-    --with-cuda --with-precision=double --download-hypre
+    --with-shared-libraries \
+    --with-cuda \
+    --with-precision=double \
+    --download-hypre
 
 make PETSC_DIR=`pwd` PETSC_ARCH=arch-linux-c-opt all
 PETSC_DIR=`pwd` PETSC_ARCH=arch-linux-c-opt all pip install petsc4py==3.15 --no-binary petsc4py
