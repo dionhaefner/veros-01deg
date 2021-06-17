@@ -143,7 +143,7 @@ class GlobalEddyResolvingSetup(VerosSetup):
         y_idx, _ = get_chunk_slices(settings.nx, settings.ny, ("yt",))
         vs.dyt = update(vs.dyt, at[2:-2], self._get_data("dyt", y_idx[0]))
 
-        vs.dzt = self._get_data("dzt")
+        vs.dzt = self._get_data("dzt")[::-1]
 
     @veros_routine
     def set_coriolis(self, state):
