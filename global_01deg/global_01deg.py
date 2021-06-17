@@ -29,6 +29,8 @@ class GlobalEddyResolvingSetup(VerosSetup):
         """
         settings = state.settings
 
+        settings.identifier = f"01deg-{self.num_layers}layers"
+
         settings.nx = 3600
         settings.ny = 1600
         settings.nz = self.num_layers
@@ -275,8 +277,9 @@ class GlobalEddyResolvingSetup(VerosSetup):
             "u",
             "v",
             "w",
-            "forc_surface_temp",
-            "forc_surface_rho",
+            "forc_temp_surface",
+            "forc_salt_surface",
+            "forc_rho_surface",
             "surface_taux",
             "surface_tauy",
             "psi",
