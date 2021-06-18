@@ -5,6 +5,14 @@ from veros import runtime_state as rst, runtime_settings as rs
 
 os.environ["CUDA_VISIBLE_DEVICES"] = str(rst.proc_rank)
 
+rs.backend = "jax"
+rs.device = "gpu"
+rs.float_type = "float32"
+rs.petsc_options = (
+    "-ksp_type gmres -ksp_rtol 1e-10 "
+    "-pc_gamg_agg_nsmooths 1 -pc_gamg_process_eq_limit 10000"
+)
+
 from veros import VerosSetup, tools, time, veros_routine, veros_kernel, KernelOutput
 from veros.variables import Variable
 from veros.distributed import get_chunk_slices
@@ -20,7 +28,7 @@ DATA_FILES = tools.get_assets(
 class GlobalEddyResolvingSetup(VerosSetup):
     """Global 0.1 degree model with either 60 or 120 vertical levels."""
 
-    num_layers = 120  # choose 60 or 120
+    num_layers = 60  # choose 60 or 120
 
     @veros_routine
     def set_parameter(self, state):
@@ -35,8 +43,8 @@ class GlobalEddyResolvingSetup(VerosSetup):
         settings.ny = 1600
         settings.nz = self.num_layers
 
-        settings.dt_mom = 180.0
-        settings.dt_tracer = 180.0
+        settings.dt_mom = 150.0
+        settings.dt_tracer = 150.0
         settings.runlen = 360 * 86400
 
         settings.x_origin = 90.0
@@ -46,13 +54,12 @@ class GlobalEddyResolvingSetup(VerosSetup):
         settings.enable_cyclic_x = True
 
         settings.enable_biharmonic_mixing = True
-        settings.K_hbi = 3e9
+        settings.K_hbi = 1e9
 
         settings.enable_biharmonic_friction = True
-        settings.A_hbi = 3e10
+        settings.A_hbi = 1e11
+        settings.biharmonic_friction_cosPower = 1.5
 
-        settings.enable_hor_friction_cos_scaling = True
-        settings.hor_friction_cosPower = 3
         settings.enable_tempsalt_sources = True
         settings.enable_implicit_vert_friction = True
 
