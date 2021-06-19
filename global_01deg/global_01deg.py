@@ -3,17 +3,19 @@ import h5netcdf
 
 from veros import runtime_state as rst, runtime_settings as rs
 
+os.environ["MPI4JAX_USE_CUDA_MPI"] = "1"
 os.environ["CUDA_VISIBLE_DEVICES"] = str(rst.proc_rank)
 
 rs.backend = "jax"
 rs.device = "gpu"
 rs.float_type = "float32"
 rs.petsc_options = (
-    "-ksp_type gmres -ksp_rtol 1e-10 "
-    "-pc_gamg_agg_nsmooths 1 -pc_gamg_process_eq_limit 10000"
+    "-ksp_type gmres -ksp_rtol 1e-8 "
+    "-pc_gamg_agg_nsmooths 1 -pc_gamg_process_eq_limit 100000"
 )
+rs.monitor_streamfunction_residual = False
 
-from veros import VerosSetup, tools, time, veros_routine, veros_kernel, KernelOutput
+from veros import VerosSetup, tools, time, veros_routine, veros_kernel, KernelOutput, logger
 from veros.variables import Variable
 from veros.distributed import get_chunk_slices
 from veros.core.operators import numpy as npx, update, at
@@ -43,9 +45,11 @@ class GlobalEddyResolvingSetup(VerosSetup):
         settings.ny = 1600
         settings.nz = self.num_layers
 
-        settings.dt_mom = 150.0
-        settings.dt_tracer = 150.0
+        settings.dt_mom = 120.0
+        settings.dt_tracer = 120.0
         settings.runlen = 360 * 86400
+
+        settings.restart_frequency = 30 * 86400
 
         settings.x_origin = 90.0
         settings.y_origin = -80.0
@@ -308,7 +312,20 @@ class GlobalEddyResolvingSetup(VerosSetup):
 
     @veros_routine
     def after_timestep(self, state):
-        pass
+        vs = state.variables
+        settings = state.settings
+
+        if settings.dt_tracer < 150 and vs.time > 90 * 86400:
+            logger.info("Setting time step to 150s")
+            with settings.unlock():
+                settings.dt_tracer = 150
+                settings.dt_mom = 150
+
+        elif settings.dt_tracer < 180 and vs.time > 180 * 86400:
+            logger.info("Setting time step to 180s")
+            with settings.unlock():
+                settings.dt_tracer = 180
+                settings.dt_mom = 180
 
 
 @veros_kernel
