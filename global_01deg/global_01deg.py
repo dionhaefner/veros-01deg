@@ -1,3 +1,5 @@
+__VEROS_VERSION__ = "1.3.2"
+
 import os
 import h5netcdf
 
@@ -62,7 +64,7 @@ class GlobalEddyResolvingSetup(VerosSetup):
 
         settings.enable_biharmonic_friction = True
         settings.A_hbi = 1e11
-        settings.biharmonic_friction_cosPower = 1.5
+        settings.biharmonic_friction_cosPower = 3
 
         settings.enable_tempsalt_sources = True
         settings.enable_implicit_vert_friction = True
