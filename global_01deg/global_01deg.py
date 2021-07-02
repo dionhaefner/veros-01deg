@@ -1,4 +1,4 @@
-__VEROS_VERSION__ = "1.3.2"
+__VEROS_VERSION__ = "1.3.3"
 
 import os
 import h5netcdf
