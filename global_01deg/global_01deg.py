@@ -343,13 +343,9 @@ def set_forcing_kernel(state):
         vs.time, year_in_seconds, year_in_seconds / 12.0, 12
     )
 
-    # linearly interpolate wind stress and shift from MITgcm U/V grid to this grid
-    vs.surface_taux = update(
-        vs.surface_taux, at[:-1, :], f1 * vs.taux[1:, :, n1] + f2 * vs.taux[1:, :, n2]
-    )
-    vs.surface_tauy = update(
-        vs.surface_tauy, at[:, :-1], f1 * vs.tauy[:, 1:, n1] + f2 * vs.tauy[:, 1:, n2]
-    )
+    # wind forcing
+    vs.surface_taux = f1 * vs.taux[..., n1] + f2 * vs.taux[..., n2]
+    vs.surface_tauy = f1 * vs.tauy[..., n1] + f2 * vs.tauy[..., n2]
 
     if settings.enable_tke:
         vs.forc_tke_surface = update(
